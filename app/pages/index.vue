@@ -62,19 +62,20 @@ const { getBreakDown } = useBreakDown()
 const song_name = "Insomnia"
 const artist_name = "Eve"
 
-function timestampToMS(timestamp: string){
-	const [minutes, seconds, milliseconds] = timestamp.slice(1, -1).split(/[:.]/).map(Number)
-	let ans
-	if (milliseconds! >= 50){
-		ans = (minutes! * 60) + seconds!
-	} else {
-		ans = (minutes! * 60) + seconds!
-	}
-	return ans
+function timestampToMS(timestamp: string) {
+  const [minutes, seconds, milliseconds] = timestamp
+    .slice(1, -1)
+    .split(/[:.]/)
+    .map(Number);
+  
+  return minutes && seconds && milliseconds ? minutes * 60 * 1000 + seconds * 1000 + milliseconds : 0;
 }
 
 const filterTimestamps = (rawSynced: Array<string>) => {
-	const matches = rawSynced.map(line => line.match(/\[\d{2}:\d{2}\.\d{2}\]/)![0]).map(timestamp => timestampToMS(timestamp))
+	const matches = rawSynced
+    .filter((line) => line.length > 11)
+    .map((line) => line.match(/\[\d{2}:\d{2}\.\d{2}\]/)![0])
+    .map((timestamp) => timestampToMS(timestamp));
 	const l = matches.length
 	let timeStampPairs = new Array<Array<number>>
 	for (let i = 0; i < l - 1; i++){
